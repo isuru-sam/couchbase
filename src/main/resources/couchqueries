@@ -1,9 +1,15 @@
 INSERT INTO test_bucket (KEY, VALUE) VALUES ("childrenInfo", {"_class": "foo.User", "childrenAges": {"Alice":10 , "Bob":5}})
 
-INSERT INTO test_bucket (KEY, VALUE) VALUES ("person1", {"_class": "com.general.generalapp.repository.User","firstName":"Ravi", "childrenAges": {"Alice":10 , "Bob":5}})
-INSERT INTO test_bucket (KEY, VALUE) VALUES ("person2", {"_class": "com.general.generalapp.repository.User","firstName":"Mark", "childrenAges": {"Alice":10 , "Bob":5}})
-INSERT INTO test_bucket (KEY, VALUE) VALUES ("person3", {"_class": "com.general.generalapp.repository.User","firstName":"John", "childrenAges": {"Alice":10 , "Bob":5}})
-INSERT INTO test_bucket (KEY, VALUE) VALUES ("person4", {"_class": "com.general.generalapp.repository.User","firstName":"Sanath", "childrenAges": {"Alice":10 , "Bob":5}})
+INSERT INTO test_bucket (KEY, VALUE) VALUES ("person1", {"_class": "com.general.generalapp.model.User","firstName":"Ravi","lastName":"Perera","dob":"2000-01-01","status":"SUCCESS", "childrenAges": {"Alice":10 , "Bob":5}})
+INSERT INTO test_bucket (KEY, VALUE) VALUES ("person2", {"_class": "com.general.generalapp.model.User","firstName":"Mark","lastName":"Taylor","dob":"2000-01-03", "status":"SUCCESS", "childrenAges": {"Alice":10 , "Bob":5}})
+INSERT INTO test_bucket (KEY, VALUE) VALUES ("person3", {"_class": "com.general.generalapp.model.User","firstName":"John","lastName":"Silva","dob":"2000-02-01", "status":"SUCCESS", "childrenAges": {"Alice":10 , "Bob":5}})
+INSERT INTO test_bucket (KEY, VALUE) VALUES ("person4", {"_class": "com.general.generalapp.model.User","firstName":"Sanath","lastName":"Silva","dob":"2000-02-02","status":"SUCCESS",  "childrenAges": {"Alice":10 , "Bob":5}})
+INSERT INTO test_bucket (KEY, VALUE) VALUES ("person5", {"_class": "com.general.generalapp.model.User","firstName":"Sam","lastName":"Siri","dob":"2000-02-02","status":"FAIL",  "childrenAges": {"Alice":110 , "Bob":15}})
+INSERT INTO test_bucket (KEY, VALUE) VALUES ("person6", {"_class": "com.general.generalapp.model.User","firstName":"Piyal","lastName":"Kiri","dob":"2000-02-02","status":"SUCCESS",  "childrenAges": {"Alice":110 , "Bob":15}})
+INSERT INTO test_bucket (KEY, VALUE) VALUES ("person7", {"_class": "com.general.generalapp.model.User","firstName":"Juwan","lastName":"Don","dob":"2000-01-01","status":"FAIL",  "childrenAges": {"Alice":50 , "Bob":15}})
+
+INSERT INTO test_bucket (KEY, VALUE) VALUES ("person8", {"_class": "com.general.generalapp.model.User","firstName":"Lamp","lastName":"Lamp","dob":"2000-01-01", "status":"FAIL", "childrenAges": {"Alice":70 , "Bob":15}})
+
 
 
 INSERT INTO test_bucket (KEY, VALUE) VALUES ("childrenInfonames1", {"_class": "foo.User", "childrenAges": {"Alice":100 , "Bob":50},"firstnames":["sarath","priath","kamath"]})
@@ -17,8 +23,10 @@ function (doc, meta) {
             /reduce/none
 
 
+"function (doc, meta){ if(doc._class == \"com.general.generalapp.model.User\" && doc.firstName && doc.lastName){emit([doc.firstName,doc.lastName], null);}}"
 
 
+"function (doc, meta){ if(doc._class == \"com.general.generalapp.model.User\" && doc.firstName && doc.dob){emit(doc.dob, null);}}"
 
 
 function (doc, meta) {
@@ -30,5 +38,5 @@ function (doc, meta) {
 
 curl -X PUT -H 'Content-Type: application/json' 'http://admin:password@127.0.0.1:8092/test_bucket/_design/user' -d '{"views":{"all":{"map":"function (doc, meta){emit(doc, null);}"}}}'
 
-curl -X PUT -H 'Content-Type: application/json' 'http://admin:password@127.0.0.1:8092/test_bucket/_design/user' -d '{"views":{"byFirstName":{"map":"function (doc, meta){ if(doc._class == \"com.general.generalapp.repository.User\" && doc.firstName){emit(doc.firstName, null);}}"}
-,"all":{"map":"function (doc, meta){emit(doc, null);}"}}}'
+curl -X PUT -H 'Content-Type: application/json' 'http://admin:password@127.0.0.1:8092/test_bucket/_design/user' -d '{"views":{"byFirstName":{"map":"function (doc, meta){ if(doc._class == \"com.general.generalapp.model.User\" && doc.firstName){emit(doc.firstName, null);}}"},"byFirstNameAndLastName":{"map":"function (doc, meta){ if(doc._class == \"com.general.generalapp.model.User\" && doc.firstName && doc.lastName){emit([doc.firstName,doc.lastName], null);}}"}
+,"byDob":{"map":"function (doc, meta){ if(doc._class == \"com.general.generalapp.model.User\"  && doc.dob && doc.status){emit([doc.dob,doc.status], null);}}","reduce":"_count"},"all":{"map":"function (doc, meta){emit(doc, null);}"}}}'

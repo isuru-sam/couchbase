@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="60">
+    <Properties>
+        <Property name="log-path">applogs</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console-Appender" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>
+                    [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+                </pattern>>
+            </PatternLayout>
+        </Console>
+        
+        <RollingRandomAccessFile fileName="${log-path}/passengerrolling.log"
+			filePattern="${log-path}/passenger-%d{yyyy-MM-dd}-%i.log.zip"
+			name="RolingFileAppender">
+			<PatternLayout>
+				<Pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingRandomAccessFile>
+        
+        
+        
+        <RollingRandomAccessFile fileName="${log-path}/errors.log"
+			filePattern="${log-path}/passenger-%d{yyyy-MM-dd}-%i.log.zip"
+			name="ERRORLOG">
+			<PatternLayout>
+				<Pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingRandomAccessFile>
+        
+    
+    </Appenders>
+    <Loggers>
+        <!-- 
+        <Logger name="com.general.generalapp.service1" level="info" additivity="false">
+            <AppenderRef ref="SpringBoot-File-Appender"/>
+            <AppenderRef ref="Console-Appender"/>
+        </Logger>
+        <Logger name="guru.springframework.blog.controllers" level="info" additivity="false">
+            <AppenderRef ref="App-File-Appender"/>
+            <AppenderRef ref="Console-Appender"/>
+         </Logger>
+         -->
+        <Root  level="info">
+            <AppenderRef ref="Console-Appender"/>
+            <AppenderRef ref="RolingFileAppender"></AppenderRef>
+        </Root>
+       
+    </Loggers>
+</Configuration>
